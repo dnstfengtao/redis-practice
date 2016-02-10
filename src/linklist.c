@@ -4,12 +4,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "listhead.h"
+#include "linklist.h"
 
 list *listCreate(void)
 {
     struct list *list;
-    if ((list = zmalloc(sizeof(*list))) == NULL)
+    if ((list = malloc(sizeof(*list))) == NULL)
         return NULL;
     list->head = list->tail = NULL;
     list->len = 0;
@@ -18,3 +18,9 @@ list *listCreate(void)
     return list;
 }
 
+int main()
+{
+    list* list = listCreate();
+    printf("%ld", list->len);
+    return 0;
+}
