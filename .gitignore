@@ -2,3 +2,4 @@ Debug/
 *.o
 .project
 .cproject
+redis
