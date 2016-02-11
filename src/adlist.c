@@ -1,11 +1,9 @@
 /**
  * link list implementation file.
  */
+#include "adlist.h"
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "zmalloc.h"
-#include "linklist.h"
 
 list *listCreate(void) {
     struct list *list;
@@ -306,22 +304,4 @@ void listRotate(list *list) {
     tail->prev = NULL;
     tail->next = list->head;
     list->head = tail;
-}
-
-int main() {
-    list *list = listCreate();
-    char *value1 = "111";
-    char *value2 = "222";
-
-    listAddNodeHead(list, value1);
-    listAddNodeHead(list, value2);
-
-    listIter *it = listGetIterator(list, AL_START_HEAD);
-    listNode *node;
-    while ((node = listNext(it)) != NULL) {
-        printf("%s\n", node->value);
-    }
-    listReleaseIterator(it);
-    listRelease(list);
-    return 0;
 }
