@@ -702,8 +702,7 @@ int sdscmp(const sds s1, const sds s2) {
  * requires length arguments. sdssplit() is just the
  * same function but for zero-terminated strings.
  */
-sds *sdssplitlen(const char *s, int len, const char *sep, int seplen,
-        int *count) {
+sds *sdssplitlen(const char *s, int len, const char *sep, int seplen, int *count) {
     int elements = 0, slots = 5, start = 0, j;
     sds *tokens;
 
@@ -730,8 +729,7 @@ sds *sdssplitlen(const char *s, int len, const char *sep, int seplen,
             tokens = newtokens;
         }
         /* search the separator */
-        if ((seplen == 1 && *(s + j) == sep[0])
-                || (memcmp(s + j, sep, seplen) == 0)) {
+        if ((seplen == 1 && *(s + j) == sep[0]) || (memcmp(s + j, sep, seplen) == 0)) {
             tokens[elements] = sdsnewlen(s + start, j - start);
             if (tokens[elements] == NULL)
                 goto cleanup;
@@ -811,8 +809,7 @@ sds sdscatrepr(sds s, const char *p, size_t len) {
 /* Helper function for sdssplitargs() that returns non zero if 'c'
  * is a valid hex digit. */
 int is_hex_digit(char c) {
-    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f')
-            || (c >= 'A' && c <= 'F');
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
 }
 
 /* Helper function for sdssplitargs() that converts a hex digit into an
@@ -901,12 +898,10 @@ sds *sdssplitargs(const char *line, int *argc) {
                 current = sdsempty();
             while (!done) {
                 if (inq) {
-                    if (*p == '\\' && *(p + 1) == 'x' && is_hex_digit(*(p + 2))
-                            && is_hex_digit(*(p + 3))) {
+                    if (*p == '\\' && *(p + 1) == 'x' && is_hex_digit(*(p + 2)) && is_hex_digit(*(p + 3))) {
                         unsigned char byte;
 
-                        byte = (hex_digit_to_int(*(p + 2)) * 16)
-                                + hex_digit_to_int(*(p + 3));
+                        byte = (hex_digit_to_int(*(p + 2)) * 16) + hex_digit_to_int(*(p + 3));
                         current = sdscatlen(current, (char*) &byte, 1);
                         p += 3;
                     } else if (*p == '\\' && *(p + 1)) {

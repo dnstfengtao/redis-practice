@@ -1,5 +1,8 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
+#include "zmalloc.h"
 #include "adlist.h"
 #include "sds.h"
 
@@ -21,6 +24,17 @@ int main() {
 
     sds s = sdsnewlen("111,hello world", 15);
     printf("%s\n", s);
+
+    sds s1 = sdsnew("finleyfeng");
+    printf("Copy the literal string into the sds buffer value is %s\n", s1);
+    // Test can get the original pointer by the buf pointer.
+    struct sdshdr *ptr = (void *) (s1 - sizeof(struct sdshdr));
+    printf("%d\n", ptr->len);
+    printf("%d\n", ptr->free);
+
+    s1 = sdscat(s1, "will append the string into my original sds string.");
+    printf("%d\n", ptr->len);
+    printf("%d\n", ptr->free);
 
     return 0;
 }
