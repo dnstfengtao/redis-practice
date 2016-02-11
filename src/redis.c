@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "adlist.h"
+#include "sds.h"
 
 int main() {
     list *list = listCreate();
@@ -17,5 +18,9 @@ int main() {
     }
     listReleaseIterator(it);
     listRelease(list);
+
+    sds s = sdsnewlen("111,hello world", 15);
+    printf("%s\n", s);
+
     return 0;
 }

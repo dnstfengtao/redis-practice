@@ -1,4 +1,5 @@
 Debug/
+obj/
 *.o
 .project
 .cproject
