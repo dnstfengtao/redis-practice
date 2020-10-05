@@ -1,37 +1,70 @@
-/**
- * link list implementation file.
+/* adlist.c - A generic doubly linked list implementation
+ *
+ * Copyright (c) 2006-2010, Salvatore Sanfilippo <antirez at gmail dot com>
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *   * Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
+ *   * Redistributions in binary form must reproduce the above copyright
+ *     notice, this list of conditions and the following disclaimer in the
+ *     documentation and/or other materials provided with the distribution.
+ *   * Neither the name of Redis nor the names of its contributors may be used
+ *     to endorse or promote products derived from this software without
+ *     specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
  */
-#include "adlist.h"
 
+
+#include <stdlib.h>
+#include "adlist.h"
 #include "zmalloc.h"
 
-list *listCreate(void) {
+/* Create a new list. The created list can be freed with
+ * AlFreeList(), but private value of every node need to be freed
+ * by the user before to call AlFreeList().
+ *
+ * On error, NULL is returned. Otherwise the pointer to the new list. */
+list *listCreate(void)
+{
     struct list *list;
-    if ((list = zmalloc(sizeof(*list))) == NULL) {
+
+    if ((list = zmalloc(sizeof(*list))) == NULL)
         return NULL;
-    }
     list->head = list->tail = NULL;
     list->len = 0;
     list->dup = NULL;
+    list->free = NULL;
     list->match = NULL;
     return list;
 }
 
 /* Free the whole list.
- * Will get the listNode one by one then call the free method to release
- * the memory.
- */
-void listRelease(list *list) {
+ *
+ * This function can't fail. */
+void listRelease(list *list)
+{
     unsigned long len;
     listNode *current, *next;
 
     current = list->head;
     len = list->len;
-    while (len--) {
+    while(len--) {
         next = current->next;
-        if (list->free) {
-            list->free(current->value);
-        }
+        if (list->free) list->free(current->value);
         zfree(current);
         current = next;
     }
@@ -44,12 +77,12 @@ void listRelease(list *list) {
  * On error, NULL is returned and no operation is performed (i.e. the
  * list remains unaltered).
  * On success the 'list' pointer you pass to the function is returned. */
-list *listAddNodeHead(list *list, void *value) {
+list *listAddNodeHead(list *list, void *value)
+{
     listNode *node;
 
-    if ((node = zmalloc(sizeof(*node))) == NULL) {
+    if ((node = zmalloc(sizeof(*node))) == NULL)
         return NULL;
-    }
     node->value = value;
     if (list->len == 0) {
         list->head = list->tail = node;
@@ -70,7 +103,8 @@ list *listAddNodeHead(list *list, void *value) {
  * On error, NULL is returned and no operation is performed (i.e. the
  * list remains unaltered).
  * On success the 'list' pointer you pass to the function is returned. */
-list *listAddNodeTail(list *list, void *value) {
+list *listAddNodeTail(list *list, void *value)
+{
     listNode *node;
 
     if ((node = zmalloc(sizeof(*node))) == NULL)
@@ -122,7 +156,8 @@ list *listInsertNode(list *list, listNode *old_node, void *value, int after) {
  * It's up to the caller to free the private value of the node.
  *
  * This function can't fail. */
-void listDelNode(list *list, listNode *node) {
+void listDelNode(list *list, listNode *node)
+{
     if (node->prev)
         node->prev->next = node->next;
     else
@@ -131,8 +166,7 @@ void listDelNode(list *list, listNode *node) {
         node->next->prev = node->prev;
     else
         list->tail = node->prev;
-    if (list->free)
-        list->free(node->value);
+    if (list->free) list->free(node->value);
     zfree(node);
     list->len--;
 }
@@ -141,11 +175,11 @@ void listDelNode(list *list, listNode *node) {
  * call to listNext() will return the next element of the list.
  *
  * This function can't fail. */
-listIter *listGetIterator(list *list, int direction) {
+listIter *listGetIterator(list *list, int direction)
+{
     listIter *iter;
 
-    if ((iter = zmalloc(sizeof(*iter))) == NULL)
-        return NULL;
+    if ((iter = zmalloc(sizeof(*iter))) == NULL) return NULL;
     if (direction == AL_START_HEAD)
         iter->next = list->head;
     else
@@ -184,7 +218,8 @@ void listRewindTail(list *list, listIter *li) {
  * }
  *
  * */
-listNode *listNext(listIter *iter) {
+listNode *listNext(listIter *iter)
+{
     listNode *current = iter->next;
 
     if (current != NULL) {
@@ -204,7 +239,8 @@ listNode *listNext(listIter *iter) {
  * the original node is used as value of the copied node.
  *
  * The original list both on success or error is never modified. */
-list *listDup(list *orig) {
+list *listDup(list *orig)
+{
     list *copy;
     listIter *iter;
     listNode *node;
@@ -215,7 +251,7 @@ list *listDup(list *orig) {
     copy->free = orig->free;
     copy->match = orig->match;
     iter = listGetIterator(orig, AL_START_HEAD);
-    while ((node = listNext(iter)) != NULL) {
+    while((node = listNext(iter)) != NULL) {
         void *value;
 
         if (copy->dup) {
@@ -246,12 +282,13 @@ list *listDup(list *orig) {
  * On success the first matching node pointer is returned
  * (search starts from head). If no matching node exists
  * NULL is returned. */
-listNode *listSearchKey(list *list, void *key) {
+listNode *listSearchKey(list *list, void *key)
+{
     listIter *iter;
     listNode *node;
 
     iter = listGetIterator(list, AL_START_HEAD);
-    while ((node = listNext(iter)) != NULL) {
+    while((node = listNext(iter)) != NULL) {
         if (list->match) {
             if (list->match(node->value, key)) {
                 listReleaseIterator(iter);
@@ -277,14 +314,12 @@ listNode *listIndex(list *list, long index) {
     listNode *n;
 
     if (index < 0) {
-        index = (-index) - 1;
+        index = (-index)-1;
         n = list->tail;
-        while (index-- && n)
-            n = n->prev;
+        while(index-- && n) n = n->prev;
     } else {
         n = list->head;
-        while (index-- && n)
-            n = n->next;
+        while(index-- && n) n = n->next;
     }
     return n;
 }
@@ -293,8 +328,7 @@ listNode *listIndex(list *list, long index) {
 void listRotate(list *list) {
     listNode *tail = list->tail;
 
-    if (listLength(list) <= 1)
-        return;
+    if (listLength(list) <= 1) return;
 
     /* Detach current tail */
     list->tail = tail->prev;
