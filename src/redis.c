@@ -8,11 +8,16 @@
 #include "fmacros.h"
 #include "dict.h"
 
+/**
+ * SDS hash 算法.
+ */
 unsigned int dictSdsHash(const void *key)
 {
-    return dictGenHashFunction((unsigned char *)key, sdslen((char *)key));
+    return dictGenHashFunction((unsigned char *)key, sdslen((sds)key));
 }
-
+/**
+ * SDS 字符串比较函数
+ */
 int dictSdsKeyCompare(void *privdata, const void *key1, const void *key2)
 {
     int l1, l2;
@@ -24,7 +29,9 @@ int dictSdsKeyCompare(void *privdata, const void *key1, const void *key2)
         return 0;
     return memcmp(key1, key2, l1) == 0;
 }
-
+/**
+ * sds 析构函数
+ */
 void dictSdsDestructor(void *privdata, void *val)
 {
     DICT_NOTUSED(privdata);
@@ -32,7 +39,7 @@ void dictSdsDestructor(void *privdata, void *val)
     sdsfree(val);
 }
 
-/* Sds dictType. */
+/* Sds 字典类型. */
 dictType sdsDictType = {
     dictSdsHash,       /* hash function */
     NULL,              /* key dup */
@@ -84,13 +91,10 @@ void testList()
 
 void testDict()
 {
+    sds key = sdsnew("name1");
+    sds value1 = sdsnew("value1");
     dict *dictTest = dictCreate(&sdsDictType, NULL);
-
-    sds *key = sdsnew("name1");
-
-    sds *value = sdsnew("value1");
-
-    dictAdd(dictTest, key, value);
+    dictAdd(dictTest, key, value1);
 }
 
 int main()
