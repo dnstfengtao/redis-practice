@@ -34,7 +34,7 @@
 /*
  * 最大预分配长度
  */
-#define SDS_MAX_PREALLOC (1024*1024)
+#define SDS_MAX_PREALLOC (1024 * 1024)
 
 #include <sys/types.h>
 #include <stdarg.h>
@@ -47,8 +47,9 @@ typedef char *sds;
 /*
  * 保存字符串对象的结构
  */
-struct sdshdr {
-    
+struct sdshdr
+{
+
     // buf 中已占用空间的长度
     int len;
 
@@ -64,8 +65,9 @@ struct sdshdr {
  *
  * T = O(1)
  */
-static inline size_t sdslen(const sds s) {
-    struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
+static inline size_t sdslen(const sds s)
+{
+    struct sdshdr *sh = (void *)(s - (sizeof(struct sdshdr)));
     return sh->len;
 }
 
@@ -74,9 +76,15 @@ static inline size_t sdslen(const sds s) {
  *
  * T = O(1)
  */
-static inline size_t sdsavail(const sds s) {
-    struct sdshdr *sh = (void*)(s-(sizeof(struct sdshdr)));
+static inline size_t sdsavail(const sds s)
+{
+    struct sdshdr *sh = (void *)(s - (sizeof(struct sdshdr)));
     return sh->free;
+}
+
+static inline struct sdshdr *getSdshdrPtnBySds(const sds s)
+{
+    return (void *)(s - (sizeof(struct sdshdr)));
 }
 
 sds sdsnewlen(const void *init, size_t initlen);

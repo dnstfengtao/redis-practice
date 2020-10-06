@@ -295,9 +295,7 @@ sds sdsMakeRoomFor(sds s, size_t addlen)
  * references must be substituted with the new pointer returned by the call. */
 sds sdsRemoveFreeSpace(sds s)
 {
-    struct sdshdr *sh;
-
-    sh = (void *)(s - (sizeof(struct sdshdr)));
+    struct sdshdr *sh = getSdshdrPtnBySds(s);
 
     // 进行内存重分配，让 buf 的长度仅仅足够保存字符串内容
     // T = O(N)
@@ -368,7 +366,7 @@ size_t sdsAllocSize(sds s)
  */
 void sdsIncrLen(sds s, int incr)
 {
-    struct sdshdr *sh = (void *)(s - (sizeof(struct sdshdr)));
+    struct sdshdr *sh = getSdshdrPtnBySds(s);
 
     // 确保 sds 空间足够
     assert(sh->free >= incr);
@@ -401,7 +399,7 @@ void sdsIncrLen(sds s, int incr)
  */
 sds sdsgrowzero(sds s, size_t len)
 {
-    struct sdshdr *sh = (void *)(s - (sizeof(struct sdshdr)));
+    struct sdshdr *sh = getSdshdrPtnBySds(s);
     size_t totlen, curlen = sh->len;
 
     // 如果 len 比字符串的现有长度小，
@@ -448,7 +446,7 @@ sds sdsgrowzero(sds s, size_t len)
 sds sdscatlen(sds s, const void *t, size_t len)
 {
 
-    struct sdshdr *sh;
+    struct sdshdr *sh = getSdshdrPtnBySds(s);
 
     // 原有字符串长度
     size_t curlen = sdslen(s);
@@ -463,7 +461,6 @@ sds sdscatlen(sds s, const void *t, size_t len)
 
     // 复制 t 中的内容到字符串后部
     // T = O(N)
-    sh = (void *)(s - (sizeof(struct sdshdr)));
     memcpy(s + curlen, t, len);
 
     // 更新属性
