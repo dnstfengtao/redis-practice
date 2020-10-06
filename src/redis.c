@@ -4,6 +4,8 @@
 #include "zmalloc.h"
 #include "adlist.h"
 #include "sds.h"
+#include "fmacros.h"
+#include "dict.h"
 
 void testSds()
 {
@@ -26,13 +28,11 @@ void testList()
 {
     list *listTest = listCreate();
     listTest->free = zfree;
-    list *listHolder = listCreate();
 
     for (int i = 0; i < 2; i++)
     {
         sds eachItem = sdsnew("item");
-        listAddNodeHead(listTest, eachItem);
-        listAddNodeHead(listHolder, eachItem);
+        listAddNodeHead(listTest, getSdshdrPtnBySds(eachItem));
     }
 
     listIter *it = listGetIterator(listTest, AL_START_TAIL);
@@ -40,19 +40,11 @@ void testList()
 
     while ((node = listNext(it)) != NULL)
     {
-        printf("%d\n", (getSdshdrPtnBySds((sds)node->value))->len);
+        printf("%d\n", ((struct sdshdr *)node->value)->len);
     }
 
     listReleaseIterator(it);
     listRelease(listTest);
-
-    listIter *itAfterFree = listGetIterator(listHolder, AL_START_TAIL);
-    listNode *nodeAfterFree;
-
-    while ((nodeAfterFree = listNext(itAfterFree)) != NULL)
-    {
-        printf("%d\n", (getSdshdrPtnBySds((sds)nodeAfterFree->value))->len);
-    }
 }
 
 int main()

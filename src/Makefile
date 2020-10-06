@@ -1,14 +1,14 @@
 CC=gcc
 
-ODIR=obj
+ODIR=.
 LDIR=../lib
 
 LIBS=-lm
 
-_DEPS=zmalloc.h adlist.h sds.h
+_DEPS=zmalloc.h adlist.h sds.h dict.h
 DEPS=$(_DEPS)
 
-_OBJ=zmalloc.o adlist.o sds.o redis.o
+_OBJ=zmalloc.o adlist.o sds.o dict.o redis.o
 OBJ=$(patsubst %, $(ODIR)/%, $(_OBJ))
 
 $(ODIR)/%.o:%.c $(DEPS)
