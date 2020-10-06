@@ -37,5 +37,7 @@ int main() {
     printf("%d\n", ptr->len);
     printf("%d\n", ptr->free);
 
+    sdsIncrLen(s1, 100);
+
     return 0;
 }
