@@ -30,6 +30,8 @@ int main() {
     struct sdshdr *ptr = (void *) (s1 - sizeof(struct sdshdr));
     printf("%d\n", ptr->len);
     printf("%d\n", ptr->free);
+    printf("len is -> %zu\n", sdslen(s1));
+    printf("available is -> %zu\n", sdsavail(s1));
 
     s1 = sdscat(s1, "will append the string into my original sds string.");
     printf("%d\n", ptr->len);
