@@ -1,6 +1,6 @@
 CC=gcc
 
-ODIR=.
+ODIR=obj
 LDIR=../lib
 
 LIBS=-lm
