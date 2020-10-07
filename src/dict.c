@@ -1501,9 +1501,7 @@ static int _dictExpandIfNeeded(dict *d)
     // 1）字典已使用节点数和字典大小之间的比率接近 1：1
     //    并且 dict_can_resize 为真
     // 2）已使用节点数和字典大小之间的比率超过 dict_force_resize_ratio
-    if (d->ht[0].used >= d->ht[0].size &&
-        (dict_can_resize ||
-         d->ht[0].used / d->ht[0].size > dict_force_resize_ratio))
+    if (d->ht[0].used >= d->ht[0].size && (dict_can_resize || d->ht[0].used / d->ht[0].size > dict_force_resize_ratio))
     {
         // 新哈希表的大小至少是目前已使用节点数的两倍
         // T = O(N)
