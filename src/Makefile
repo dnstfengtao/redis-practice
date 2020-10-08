@@ -5,10 +5,10 @@ LDIR=../lib
 
 LIBS=-lm
 
-_DEPS=zmalloc.h adlist.h sds.h dict.h
+_DEPS=zmalloc.h adlist.h sds.h dict.h intset.h
 DEPS=$(_DEPS)
 
-_OBJ=zmalloc.o adlist.o sds.o dict.o redis.o
+_OBJ=zmalloc.o adlist.o sds.o dict.o intset.o redis.o
 OBJ=$(patsubst %, $(ODIR)/%, $(_OBJ))
 
 $(ODIR)/%.o:%.c $(DEPS)
