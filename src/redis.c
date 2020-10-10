@@ -7,6 +7,7 @@
 #include "sds.h"
 #include "fmacros.h"
 #include "dict.h"
+#include "intset.h"
 
 /**
  * SDS hash 算法.
@@ -91,10 +92,24 @@ void testList()
 
 void testDict()
 {
+    printf("Begin test dict \n\n");
     sds key = sdsnew("name1");
     sds value1 = sdsnew("value1");
     dict *dictTest = dictCreate(&sdsDictType, NULL);
     dictAdd(dictTest, key, value1);
+    printf("End test dict \n\n");
+}
+
+void testIntSet()
+{
+    printf("Begin test int set \n\n");
+    intset *testIntSet = intsetNew();
+    for (int i = 0; i < 8; i++)
+    {
+        testIntSet = intsetAdd(testIntSet, i, NULL);
+    }
+    printf("test intset get %lld\n", intsetRandom(testIntSet));
+    printf("End test int set \n\n");
 }
 
 int main()
@@ -105,6 +120,8 @@ int main()
     testList();
 
     testDict();
+
+    testIntSet();
 
     return 0;
 }

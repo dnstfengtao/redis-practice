@@ -176,7 +176,6 @@ intset *intsetNew(void)
  */
 static intset *intsetResize(intset *is, uint32_t len)
 {
-
     // 计算数组的空间大小
     uint32_t size = len * intrev32ifbe(is->encoding);
 
