@@ -4,3 +4,4 @@ obj/
 .project
 .cproject
 redis
+.vscode
