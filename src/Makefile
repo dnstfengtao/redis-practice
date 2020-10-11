@@ -21,7 +21,7 @@ $(ODIR)/%.o:%.c
 
 # 替换函数 - 目前没有用.
 # 仅仅用于定义生成目标文件所有的依赖文件.
-_OBJ=zmalloc.o adlist.o sds.o dict.o intset.o redis.o
+_OBJ=zmalloc.o adlist.o sds.o dict.o intset.o ziplist.o util.o redis.o
 OBJ=$(patsubst %, $(ODIR)/%, $(_OBJ))
 
 # redis 集成命令 -> 将所有依赖的文件编译成 redis 目标文件.

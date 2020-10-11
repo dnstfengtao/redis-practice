@@ -1,3 +1,4 @@
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,6 +9,7 @@
 #include "fmacros.h"
 #include "dict.h"
 #include "intset.h"
+#include "ziplist.h"
 
 /**
  * SDS hash 算法.
