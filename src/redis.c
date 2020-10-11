@@ -58,7 +58,6 @@ void testSds()
     sds s1 = sdsnew("finleyfeng");
     printf("Copy the literal string into the sds buffer value is %s\n", s1);
     // Test can get the original pointer by the buf pointer.
-    struct sdshdr *ptr = getSdshdrPtnBySds(s1);
     printf("len is -> %zu\n", sdslen(s1));
     printf("available is -> %zu\n", sdsavail(s1));
 

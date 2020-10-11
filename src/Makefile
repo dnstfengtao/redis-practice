@@ -14,13 +14,17 @@ LIBS=-lm
 # All dependencies.
 _DEPS=*.h
 DEPS=$(_DEPS)
-# 替换函数 - 目前没有用
+
+# 将所有 .c 文件编译成 .o 文件
+$(ODIR)/%.o:%.c
+	$(CC) ${CCFLAGS} -c -o $@ $<
+
+# 替换函数 - 目前没有用.
+# 仅仅用于定义生成目标文件所有的依赖文件.
 _OBJ=zmalloc.o adlist.o sds.o dict.o intset.o redis.o
 OBJ=$(patsubst %, $(ODIR)/%, $(_OBJ))
 
-$(ODIR)/%.o:%.c $(DEPS)
-	$(CC) ${CCFLAGS} -c -o $@ $<
-
+# redis 集成命令 -> 将所有依赖的文件编译成 redis 目标文件.
 redis:$(OBJ)
 	$(CC) ${CCFLAGS} -o $@ $^ $(LIBS)
 
