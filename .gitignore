@@ -5,3 +5,4 @@ obj/
 .cproject
 redis
 .vscode
+*.code-workspace
