@@ -219,7 +219,7 @@ void sdsclear(sds s)
 /* Enlarge the free space at the end of the sds string so that the caller
  * is sure that after calling this function can overwrite up to addlen
  * bytes after the end of the string, plus one more byte for nul term.
- * 
+ *
  * Note: this does not change the *length* of the sds string as returned
  * by sdslen(), but only the free buffer space we have. */
 /*
@@ -445,9 +445,6 @@ sds sdsgrowzero(sds s, size_t len)
  * references must be substituted with the new pointer returned by the call. */
 sds sdscatlen(sds s, const void *t, size_t len)
 {
-
-    struct sdshdr *sh = getSdshdrPtnBySds(s);
-
     // 原有字符串长度
     size_t curlen = sdslen(s);
 
@@ -464,6 +461,7 @@ sds sdscatlen(sds s, const void *t, size_t len)
     memcpy(s + curlen, t, len);
 
     // 更新属性
+    struct sdshdr *sh = getSdshdrPtnBySds(s);
     sh->len = curlen + len;
     sh->free = sh->free - len;
 
@@ -476,7 +474,7 @@ sds sdscatlen(sds s, const void *t, size_t len)
 
 /*
  * 将给定字符串 t 追加到 sds 的末尾
- * 
+ *
  * 返回值
  *  sds ：追加成功返回新 sds ，失败返回 NULL
  *
@@ -494,7 +492,7 @@ sds sdscat(sds s, const char *t)
 
 /*
  * 将另一个 sds 追加到一个 sds 的末尾
- * 
+ *
  * 返回值
  *  sds ：追加成功返回新 sds ，失败返回 NULL
  *
@@ -664,7 +662,7 @@ sds sdsfromlonglong(long long value)
     return sdsnewlen(buf, len);
 }
 
-/* 
+/*
  * 打印函数，被 sdscatprintf 所调用
  *
  * T = O(N^2)
@@ -1516,7 +1514,7 @@ err:
  * 就会将 "hello" 转换为 "0ell1"
  *
  * The function returns the sds string pointer, that is always the same
- * as the input pointer since no resize is needed. 
+ * as the input pointer since no resize is needed.
  * 因为无须对 sds 进行大小调整，
  * 所以返回的 sds 输入的 sds 一样
  *
